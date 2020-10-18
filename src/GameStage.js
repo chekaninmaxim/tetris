@@ -12,8 +12,6 @@ import {
   } from './state.js';
 import './App.css';
 
-const keyCodes = [37, 38, 39, 40];
-
 const keyActions = {
   '37' : moveBlocksLeft,
   '39' : moveBlocksRight,

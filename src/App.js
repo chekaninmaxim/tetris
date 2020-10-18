@@ -1,13 +1,6 @@
 import React from 'react';
 import GameStage from './GameStage.js';
 
-import {
-  makeInitialState,
-  moveBlocksDown,
-  moveBlocksLeft,
-  moveBlocksRight,
-
-  } from './state.js';
 import './App.css';
 
 function App() {

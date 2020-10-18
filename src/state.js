@@ -14,53 +14,57 @@ export const makeInitialState = function() {
 	}
 }
 
-function moveBlocksFactory(getNewPosition) {
+const positionsEqual = function(p1, p2) {
+	return p1.x === p2.x && p1.y === p2.y
+}
+
+
+function moveBlocksFactory(getNewPosition, isDown=false) {
+
 	const setStateFn = function(state) {
 
-		const isFigureStuck = state.movableBlocks.some(block => {
+		const newPositions = state.movableBlocks.map(block => {
 			const newPosition = getNewPosition(block.position);
-
-			return Boolean(state.blocksMap[block.position.x][block.position.y + 1])
-				|| newPosition.y >= Settings.stageSize.height - 1;
+			if (state.blocksMap[newPosition.y][newPosition.x]) {
+				return block.position
+			} else {
+				return newPosition
+			}
 		});
 
-		if (isFigureStuck) {
-			const newBlocksMap = state.blocksMap.slice();
-			for (let block of state.movableBlocks) {
-				const newPosition = getNewPosition(block.position);
-				console.log(newPosition);
-				newBlocksMap[newPosition.y][newPosition.x] = block.color;
-			}
+		const isMoveInvalid = state.movableBlocks.some(
+			(block, i) => positionsEqual(block.position, newPositions[i])
+		);
 
-			return {
-				movableBlocks : [],
-				blocksMap: newBlocksMap
-			}
-		} else {
-			const positionsEqual = function(p1, p2) {
-				return p1.x === p2.x && p1.y === p2.y
-			}
+		if (isMoveInvalid) {
+			if (isDown) {
 
-			const blocksShoudNotMove = state.movableBlocks.some(b =>
-				positionsEqual(getNewPosition(b.position), b.position)
-			);
-			if (blocksShoudNotMove) {
-				return state;
-			} else {
-
-				const newMovableBlocks = state.movableBlocks.map(block => {
-					const newBlock = {
-						...block,
-						position : getNewPosition(block.position)
-					}
-					return newBlock;
-				});
+				const newBlocksMap = state.blocksMap.slice();
+				for (let block of state.movableBlocks) {
+					console.log(block.position);
+					newBlocksMap[block.position.y][block.position.x] = block.color;
+				}
 
 				return {
-					...state,
-					movableBlocks: newMovableBlocks,
-				};
+					movableBlocks : [],
+					blocksMap: newBlocksMap
+				}
+			} else {
+				return state;
 			}
+		} else {
+			const newMovableBlocks = state.movableBlocks.map((block, i) => {
+				const newBlock = {
+					...block,
+					position : newPositions[i]
+				}
+				return newBlock;
+			});
+
+			return {
+				...state,
+				movableBlocks: newMovableBlocks,
+			};
 		}
 	}
 
@@ -70,7 +74,7 @@ function moveBlocksFactory(getNewPosition) {
 export const moveBlocksDown = moveBlocksFactory(p => ({
 	x: p.x,
 	y: Math.min(p.y + 1, Settings.stageSize.height - 1)
-}));
+}), true);
 
 export const moveBlocksLeft = moveBlocksFactory(p => ({
 	x: Math.max(p.x - 1, 0),
