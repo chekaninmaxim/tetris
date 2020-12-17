@@ -1,5 +1,6 @@
 import Settings from './settings.js';
 
+
 export default function getMovableBlock() {
 	return [
 		{

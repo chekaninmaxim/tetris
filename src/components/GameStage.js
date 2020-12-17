@@ -1,16 +1,15 @@
 
 import React from 'react';
-import Settings, {getRealSize, addPx} from './settings.js';
+import Settings, {getRealSize, addPx} from '../settings.js';
 import TetrisBlock from './TetrisBlock.js';
-import getMovableBlock from './block.js';
+import getMovableBlock from '../block.js';
 import {
   makeInitialState,
   moveBlocksDown,
   moveBlocksLeft,
   moveBlocksRight,
 
-  } from './state.js';
-import './App.css';
+  } from '../state.js';
 
 const keyActions = {
   '37' : moveBlocksLeft,
@@ -46,7 +45,7 @@ class GameStage extends React.Component {
     } else {
       this.setState(
         oldState => {
-          return {...oldState, movableBlocks: getMovableBlock()}
+          return {movableBlocks: getMovableBlock()}
         }
       );
     }

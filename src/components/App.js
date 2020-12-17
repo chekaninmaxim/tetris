@@ -1,7 +1,7 @@
 import React from 'react';
 import GameStage from './GameStage.js';
 
-import './App.css';
+import '../App.css';
 
 function App() {
   return (

@@ -41,7 +41,6 @@ function moveBlocksFactory(getNewPosition, isDown=false) {
 
 				const newBlocksMap = state.blocksMap.slice();
 				for (let block of state.movableBlocks) {
-					console.log(block.position);
 					newBlocksMap[block.position.y][block.position.x] = block.color;
 				}
 

@@ -1,6 +1,5 @@
 import React from 'react';
-import Settings, {getRealSize, addPx} from './settings.js';
-import './App.css';
+import Settings, {getRealSize, addPx} from '../settings.js';
 
 function TetrisBlock(props) {
   const style = {
