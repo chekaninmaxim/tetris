@@ -1,5 +1,6 @@
-import Settings from './settings.js';
-import getMovableBlock from './block.js';
+import Settings from './settings'
+import C from './constants'
+import { getRandomFigure } from './figure'
 
 export const makeInitialState = function() {
 	const blocksMap = [];
@@ -9,7 +10,7 @@ export const makeInitialState = function() {
 	}
 
 	return {
-		movableBlocks : getMovableBlock(),
+		figure : getRandomFigure(),
 		blocksMap: blocksMap,
 	}
 }
@@ -18,51 +19,45 @@ const positionsEqual = function(p1, p2) {
 	return p1.x === p2.x && p1.y === p2.y
 }
 
+export function moveBlocksFactory(action) {
 
-function moveBlocksFactory(getNewPosition, isDown=false) {
+	const setStateFn = function({figure, blocksMap}) {
 
-	const setStateFn = function(state) {
+		const oldPositions = figure.blocks;
+		const newFigure = getNextFigure(figure, action)
+		const newPositions = newFigure.blocks;
+		console.log(oldPositions, newPositions);
 
-		const newPositions = state.movableBlocks.map(block => {
-			const newPosition = getNewPosition(block.position);
-			if (state.blocksMap[newPosition.y][newPosition.x]) {
-				return block.position
-			} else {
-				return newPosition
-			}
-		});
-
-		const isMoveInvalid = state.movableBlocks.some(
-			(block, i) => positionsEqual(block.position, newPositions[i])
+		const isStuck = newPositions.some(
+			block => blocksMap[block.y][block.x]
 		);
 
-		if (isMoveInvalid) {
-			if (isDown) {
-
-				const newBlocksMap = state.blocksMap.slice();
-				for (let block of state.movableBlocks) {
-					newBlocksMap[block.position.y][block.position.x] = block.color;
+		const samePositions = newPositions.every(
+			(block, i) => positionsEqual(block, oldPositions[i])
+		);
+		
+		if (action === C.DOWN) {
+			console.log(isStuck, samePositions);
+			if (isStuck || samePositions) {
+				const newBlocksMap = blocksMap.slice();
+				for (let block of oldPositions) {
+					newBlocksMap[block.y][block.x] = figure.color;
 				}
 
 				return {
-					movableBlocks : [],
+					figure: null,
 					blocksMap: newBlocksMap
 				}
 			} else {
-				return state;
+				return {
+					figure: newFigure,
+					blocksMap
+				}
 			}
 		} else {
-			const newMovableBlocks = state.movableBlocks.map((block, i) => {
-				const newBlock = {
-					...block,
-					position : newPositions[i]
-				}
-				return newBlock;
-			});
-
 			return {
-				...state,
-				movableBlocks: newMovableBlocks,
+				figure: isStuck ? figure : newFigure,
+				blocksMap
 			};
 		}
 	}
@@ -70,17 +65,18 @@ function moveBlocksFactory(getNewPosition, isDown=false) {
 	return setStateFn;
 }
 
-export const moveBlocksDown = moveBlocksFactory(p => ({
-	x: p.x,
-	y: Math.min(p.y + 1, Settings.stageSize.height - 1)
-}), true);
-
-export const moveBlocksLeft = moveBlocksFactory(p => ({
-	x: Math.max(p.x - 1, 0),
-	y: p.y
-}));
-
-export const moveBlocksRight = moveBlocksFactory(p => ({
-	x: Math.min(p.x + 1, Settings.stageSize.width - 1),
-	y: p.y
-}));
+function getNextFigure(figure, action) {
+	const { x, y } = figure.position;
+	switch (action) {
+		case C.LEFT:
+			return figure.move({ x: x - 1, y });
+		case C.RIGHT:
+			return figure.move({ x: x + 1, y });
+		case C.DOWN:
+			return figure.move({ x, y: y + 1 });
+		case C.ROTATE:
+			return figure.rotate();
+		default:
+			return figure;
+	}
+}
