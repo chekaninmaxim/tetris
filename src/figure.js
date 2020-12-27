@@ -53,12 +53,12 @@ class TetrisFigure {
 	ensureInside({x, y}, rotation) {
 		return {
 			x: Math.max(
-				rotation == 1 ? 0 : 1,
-				Math.min(x, Settings.stageSize.width - (rotation == 3 ? 1 : 2))),
+				rotation === 1 ? 0 : 1,
+				Math.min(x, Settings.stageSize.width - (rotation === 3 ? 1 : 2))),
 
 			y: Math.max(
-				rotation == 3 ? 0 : 1,
-				Math.min(y, Settings.stageSize.height - (rotation == 0 ? 1 : 2)))
+				rotation === 2 ? 0 : 1,
+				Math.min(y, Settings.stageSize.height - (rotation === 0 ? 1 : 2)))
 		}
 	}
 
@@ -143,7 +143,7 @@ class TetrisLeftStep extends TetrisFigure {
 	ensureInside({ x, y }, rotation) {
 		return {
 			x: Math.max(rotation % 2 ? 0 : 1, Math.min(x, Settings.stageSize.width - 2)),
-			y: Math.max(rotation % 2 ? 1 : 0, Math.min(y, Settings.stageSize.height - (rotation % 2 === 1 ? 2 : 1)))
+			y: Math.max(1, Math.min(y, Settings.stageSize.height - (rotation % 2 ? 2 : 1)))
 		}
 	}
 }
@@ -219,8 +219,8 @@ class TetrisLShape extends TetrisFigure {
 
 	ensureInside({ x, y }, rotation) {
 		return {
-			x: Math.max(rotation == 1 ? 0 : 1, Math.min(x, Settings.stageSize.width - (rotation === 3 ? 1 : 2))),
-			y: Math.max(rotation == 2 ? 0 : 1, Math.min(y, Settings.stageSize.height - (rotation === 0 ? 1 : 2)))
+			x: Math.max(rotation === 1 ? 0 : 1, Math.min(x, Settings.stageSize.width - (rotation === 3 ? 1 : 2))),
+			y: Math.max(rotation === 2 ? 0 : 1, Math.min(y, Settings.stageSize.height - (rotation === 0 ? 1 : 2)))
 		}
 	}
 

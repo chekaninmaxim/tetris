@@ -19,50 +19,61 @@ const positionsEqual = function(p1, p2) {
 	return p1.x === p2.x && p1.y === p2.y
 }
 
-export function moveBlocksFactory(action) {
-
-	const setStateFn = function({figure, blocksMap}) {
-
-		const oldPositions = figure.blocks;
-		const newFigure = getNextFigure(figure, action)
-		const newPositions = newFigure.blocks;
-		console.log(oldPositions, newPositions);
-
-		const isStuck = newPositions.some(
-			block => blocksMap[block.y][block.x]
-		);
-
-		const samePositions = newPositions.every(
-			(block, i) => positionsEqual(block, oldPositions[i])
-		);
-		
-		if (action === C.DOWN) {
-			console.log(isStuck, samePositions);
-			if (isStuck || samePositions) {
-				const newBlocksMap = blocksMap.slice();
-				for (let block of oldPositions) {
-					newBlocksMap[block.y][block.x] = figure.color;
-				}
-
-				return {
-					figure: null,
-					blocksMap: newBlocksMap
-				}
-			} else {
-				return {
-					figure: newFigure,
-					blocksMap
-				}
-			}
-		} else {
-			return {
-				figure: isStuck ? figure : newFigure,
-				blocksMap
-			};
+export function blocksReducer({ figure, blocksMap }, action) {
+	console.log(action, figure);
+	if (!figure) {
+		return {
+			figure: getRandomFigure(),
+			blocksMap
 		}
 	}
 
-	return setStateFn;
+	const oldPositions = figure.blocks;
+
+	const newFigure = getNextFigure(figure, action.type)
+	const newPositions = newFigure.blocks;
+
+	let isStuck = false; 
+	try {
+		isStuck = newPositions.some(
+			block => blocksMap[block.y][block.x]
+		);
+
+	} catch (error) {
+		console.log(error);
+		return {
+			figure,
+			blocksMap
+		}	
+	}
+
+	const samePositions = newPositions.every(
+		(block, i) => positionsEqual(block, oldPositions[i])
+	);
+
+	if (action.type === C.DOWN) {
+		if (isStuck || samePositions) {
+			const newBlocksMap = blocksMap.slice();
+			for (let block of oldPositions) {
+				newBlocksMap[block.y][block.x] = figure.color;
+			}
+
+			return {
+				figure: null,
+				blocksMap: newBlocksMap
+			}
+		} else {
+			return {
+				figure: newFigure,
+				blocksMap
+			}
+		}
+	} else {
+		return {
+			figure: isStuck ? figure : newFigure,
+			blocksMap
+		};
+	}
 }
 
 function getNextFigure(figure, action) {
