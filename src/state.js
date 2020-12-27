@@ -12,6 +12,10 @@ export const makeInitialState = function() {
 	return {
 		figure : getRandomFigure(),
 		blocksMap: blocksMap,
+		gameStatus: {
+			score: 0,
+			gameOver: false
+		}
 	}
 }
 
@@ -19,12 +23,12 @@ const positionsEqual = function(p1, p2) {
 	return p1.x === p2.x && p1.y === p2.y
 }
 
-export function blocksReducer({ figure, blocksMap }, action) {
-	console.log(action, figure);
+export function blocksReducer({ figure, blocksMap, gameStatus }, action) {
 	if (!figure) {
 		return {
 			figure: getRandomFigure(),
-			blocksMap
+			blocksMap,
+			gameStatus
 		}
 	}
 
@@ -43,7 +47,8 @@ export function blocksReducer({ figure, blocksMap }, action) {
 		console.log(error);
 		return {
 			figure,
-			blocksMap
+			blocksMap,
+			gameStatus
 		}	
 	}
 
@@ -58,22 +63,46 @@ export function blocksReducer({ figure, blocksMap }, action) {
 				newBlocksMap[block.y][block.x] = figure.color;
 			}
 
+			const reducedBlocksMap = reduceFullRows(newBlocksMap);
+
 			return {
 				figure: null,
-				blocksMap: newBlocksMap
+				blocksMap: reducedBlocksMap,
+				gameStatus: {
+					score: gameStatus.score + 1,
+					gameOver: isGameOver(reducedBlocksMap)
+				}
 			}
 		} else {
 			return {
 				figure: newFigure,
-				blocksMap
+				blocksMap,
+				gameStatus
 			}
 		}
 	} else {
 		return {
 			figure: isStuck ? figure : newFigure,
-			blocksMap
+			blocksMap,
+			gameStatus
 		};
 	}
+}
+
+function reduceFullRows(blocksMap) {
+	const withoutFullRows = blocksMap.filter(row => 
+		row.filter(b => Boolean(b)).length < Settings.stageSize.width
+	);
+	const numberOfRowsToAdd = Settings.stageSize.height - withoutFullRows.length;
+	const emptyRows = [];
+	for (let i = 0; i < numberOfRowsToAdd; i ++) {
+		emptyRows[i] = Array(Settings.stageSize.width)
+	}
+	return emptyRows.concat(withoutFullRows);
+}
+
+function isGameOver(blocksMap) {
+	return blocksMap[0].filter(block => Boolean(block)).length > 0;
 }
 
 function getNextFigure(figure, action) {

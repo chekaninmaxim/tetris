@@ -1,7 +1,7 @@
 
 import React, {useReducer, useEffect} from 'react';
 import Settings, {getRealSize, addPx} from '../settings';
-import TetrisBlock from './TetrisBlock';
+import BlocksGroup from './BlocksGroup';
 import C from '../constants'
 import {
   makeInitialState,
@@ -17,57 +17,63 @@ const key2Action = {
 
 const GameStage = () => {
 
-  const style = {
-    width: addPx(getRealSize(Settings.stageSize.width)),
-    height: addPx(getRealSize(Settings.stageSize.height))
-  }
+	const style = {
+		width: addPx(getRealSize(Settings.stageSize.width)),
+		height: addPx(getRealSize(Settings.stageSize.height))
+	}
 
-  const [state, dispatch] = useReducer(blocksReducer, makeInitialState());
+	const [state, dispatch] = useReducer(blocksReducer, makeInitialState());
 
-  const handleKeyDown = ({keyCode}) => {
-    const action = key2Action[keyCode];
-    if (action) dispatch(action);
-  }
+	const handleKeyDown = ({keyCode}) => {
+		const action = key2Action[keyCode];
+		if (action) dispatch(action);
+	}
 
-	const makeRegularMove = () => {
-		console.log('regular move')
-		dispatch({ type : C.DOWN });
-	};
+	const makeRegularMove = () => dispatch({ type : C.DOWN });
 
 	useEffect(() => {
-		document.addEventListener("keydown", handleKeyDown);
-    	const timerId = setInterval(makeRegularMove, Settings.updateRate);
-		return () => {
-			document.removeEventListener("keydown", handleKeyDown);
-			clearInterval(timerId);
+		if (!state.gameStatus.gameOver) {
+			document.addEventListener("keydown", handleKeyDown);
+			const timerId = setInterval(makeRegularMove, Settings.updateRate);
+			return () => {
+				document.removeEventListener("keydown", handleKeyDown);
+				clearInterval(timerId);
+			}
 		}
-  	}, []);
+	}, [state.gameStatus.gameOver]);
+
+	useEffect(() => {
+		console.log("your score is ", state.gameStatus.score);
+	}, [state.gameStatus.score])
 
 	return (
 		<div className={'Tetris-stage'} style={style}>
-			{state.figure && state.figure.blocks.map((block, idx) =>
-				<TetrisBlock
-					key={idx}
-					position={block}
-					color={state.figure.color}
-				/>
-			)}
+			
+			{ <BlocksGroup
+				key={0}
+				blocks={state.figure?.blocks.map((block, idx) => ({
+					position: block,
+					color: state.figure.color
+				}))}
+			/> }
 
-			{state.blocksMap.map(function(row, y) {
-			return row.reduce(function(filtered, block, x) {
-				if (block) {
-				return filtered.concat(
-					<TetrisBlock
-					key = {y * Settings.stageSize.width + x}
-					position={{x, y}}
-					color={block}
-					/> 
-				)
-				} else {
-				return filtered;
+			<BlocksGroup
+				key={1}
+				blocks={
+					state.blocksMap.map((row, y) => row.reduce((filtered, color, x) => {
+						if (color) {
+							return filtered.concat({
+								position: { x, y },
+								color: color
+							})
+						} else {
+							return filtered;
+						}
+					}, [])).flat()
 				}
-			}, [])
-			})}
+			/>
+
+			{ state.gameStatus.gameOver && <h1> game over! </h1> }
 		</div>
 	)
 }
