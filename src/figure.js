@@ -274,20 +274,20 @@ class TetrisLShapeMirror extends TetrisFigure {
 }
 
 const constructors = [
-	(point, rotation, color) => new TetrisFigure(point, rotation, color),
 	(point, rotation, color) => new TetrisSquare(point, rotation, color),
 	(point, rotation, color) => new TetrisLeftStep(point, rotation, color),
 	(point, rotation, color) => new TetrisRightStep(point, rotation, color),
+	(point, rotation, color) => new TetrisFigure(point, rotation, color),
+	(point, rotation, color) => new TetrisLine(point, rotation, color),
 	(point, rotation, color) => new TetrisLShape(point, rotation, color),
 	(point, rotation, color) => new TetrisLShapeMirror(point, rotation, color),
-	(point, rotation, color) => new TetrisLine(point, rotation, color),
 ];
 
 export function getRandomFigure() {
 	const color = '#' + Math.floor(Math.random() * 16777215).toString(16);
 	const point = {y : 0, x : Math.floor(Math.random() * Settings.stageSize.width)};
 	const rotation = Math.floor(Math.random() * 4);
-	const shapeIdx = Math.floor(Math.random() * 4); 
+	const shapeIdx = Math.floor(Math.random() * constructors.length);
 
 	return constructors[shapeIdx](point, rotation, color);
 }
