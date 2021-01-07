@@ -1,10 +1,18 @@
 import Settings from './settings';
 
-class TetrisFigure {
-	constructor(startPosition, rotation, color='#00ff00') {
+class AbstractTetrisFigure {
+	constructor(startPosition, rotation, color = '#00ff00') {
 		this.position = this.ensureInside(startPosition, rotation);
 		this.rotation = rotation % 4;
 		this.color = color
+	}
+
+	get blocks() {
+		throw "Not implemented";
+	}
+
+	ensureInside(position, rotation) {
+		throw "Not Implemented"
 	}
 
 	rotate() {
@@ -14,6 +22,9 @@ class TetrisFigure {
 	move(newPosition) {
 		return new this.constructor(newPosition, this.rotation, this.color)
 	}
+}
+
+class TetrisPedestal extends AbstractTetrisFigure {
 
 	get blocks() {
 		const {x, y} = this.position
@@ -64,7 +75,7 @@ class TetrisFigure {
 
 }
 
-class TetrisSquare extends TetrisFigure {
+class TetrisSquare extends AbstractTetrisFigure {
 
 	get blocks() {
 		const { x, y } = this.position
@@ -87,7 +98,7 @@ class TetrisSquare extends TetrisFigure {
 
 }
 
-class TetrisLine extends TetrisFigure {
+class TetrisLine extends AbstractTetrisFigure {
 
 	get blocks() {
 		const { x, y } = this.position
@@ -118,7 +129,7 @@ class TetrisLine extends TetrisFigure {
 
 }
 
-class TetrisLeftStep extends TetrisFigure {
+class TetrisLeftStep extends AbstractTetrisFigure {
 
 	get blocks() {
 		const { x, y } = this.position
@@ -148,7 +159,7 @@ class TetrisLeftStep extends TetrisFigure {
 	}
 }
 
-class TetrisRightStep extends TetrisFigure {
+class TetrisRightStep extends AbstractTetrisFigure {
 
 	get blocks() {
 		const { x, y } = this.position
@@ -179,7 +190,7 @@ class TetrisRightStep extends TetrisFigure {
 
 }
 
-class TetrisLShape extends TetrisFigure {
+class TetrisLShape extends AbstractTetrisFigure {
 
 	get blocks() {
 		const { x, y } = this.position;
@@ -226,7 +237,7 @@ class TetrisLShape extends TetrisFigure {
 
 }
 
-class TetrisLShapeMirror extends TetrisFigure {
+class TetrisLShapeMirror extends AbstractTetrisFigure {
 
 	get blocks() {
 		const { x, y } = this.position;
@@ -277,7 +288,7 @@ const constructors = [
 	(point, rotation, color) => new TetrisSquare(point, rotation, color),
 	(point, rotation, color) => new TetrisLeftStep(point, rotation, color),
 	(point, rotation, color) => new TetrisRightStep(point, rotation, color),
-	(point, rotation, color) => new TetrisFigure(point, rotation, color),
+	(point, rotation, color) => new TetrisPedestal(point, rotation, color),
 	(point, rotation, color) => new TetrisLine(point, rotation, color),
 	(point, rotation, color) => new TetrisLShape(point, rotation, color),
 	(point, rotation, color) => new TetrisLShapeMirror(point, rotation, color),

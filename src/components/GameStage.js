@@ -47,16 +47,16 @@ const GameStage = () => {
 	}, [state.gameStatus.score])
 
 	return (
-		<div className={'Tetris-stage'} style={style}>
-			
-			{ <BlocksGroup
+		<div className={'Tetris-stage'} style={style} >	
+			<BlocksGroup
 				key={0}
-				blocks={state.figure?.blocks.map((block, idx) => ({
-					position: block,
-					color: state.figure.color
-				}))}
-			/> }
-
+				blocks={
+					state.figure?.blocks.map(block => ({
+						position: block,
+						color: state.figure.color
+					}))
+				}
+			/> 
 			<BlocksGroup
 				key={1}
 				blocks={
@@ -72,7 +72,6 @@ const GameStage = () => {
 					}, [])).flat()
 				}
 			/>
-
 			{ state.gameStatus.gameOver && <h1> game over! </h1> }
 		</div>
 	)
