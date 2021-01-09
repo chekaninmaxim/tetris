@@ -1,12 +1,19 @@
 
 import React, {useReducer, useEffect} from 'react';
-import Settings, {getRealSize, addPx} from '../settings';
 import BlocksGroup from './BlocksGroup';
-import C from '../constants'
+
+import { updateScore, updateNext } from '../../redux/actions'
+import { connect } from 'react-redux'
+
+import Settings from '../../settings'
+import withLogicSize from './hoc/withLogicSize'
+import C from '../../constants'
+
+
 import {
   makeInitialState,
   blocksReducer
-} from '../state.js';
+} from '../../gamelogic.js';
 
 const key2Action = {
   '32': {type: C.ROTATE},
@@ -15,12 +22,7 @@ const key2Action = {
   '40': {type: C.DOWN}
 }
 
-const GameStage = () => {
-
-	const style = {
-		width: addPx(getRealSize(Settings.stageSize.width)),
-		height: addPx(getRealSize(Settings.stageSize.height))
-	}
+const GameStage = ({ updateScore, updateNext, size}) => {
 
 	const [state, dispatch] = useReducer(blocksReducer, makeInitialState());
 
@@ -43,11 +45,17 @@ const GameStage = () => {
 	}, [state.gameStatus.gameOver]);
 
 	useEffect(() => {
-		console.log("your score is ", state.gameStatus.score);
+		if (state.nextFigure) {
+			updateNext(state.nextFigure.blocks || [])
+		}
+	}, [state.nextFigure])
+
+	useEffect(() => {
+		updateScore(state.gameStatus.score)
 	}, [state.gameStatus.score])
 
 	return (
-		<div className={'Tetris-stage'} style={style} >	
+		<div className={'Tetris-stage'} style={size} >	
 			<BlocksGroup
 				key={0}
 				blocks={
@@ -77,4 +85,7 @@ const GameStage = () => {
 	)
 }
 
-export default GameStage;
+const mapDispatchToProps = { updateScore, updateNext }
+const {width, height} = Settings.stageSize
+
+export default withLogicSize(width, height)(connect(null, mapDispatchToProps)(GameStage));

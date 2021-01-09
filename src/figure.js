@@ -22,6 +22,7 @@ class AbstractTetrisFigure {
 	move(newPosition) {
 		return new this.constructor(newPosition, this.rotation, this.color)
 	}
+
 }
 
 class TetrisPedestal extends AbstractTetrisFigure {

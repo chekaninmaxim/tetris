@@ -11,6 +11,7 @@ export const makeInitialState = function() {
 
 	return {
 		figure : getRandomFigure(),
+		nextFigure : getRandomFigure(),
 		blocksMap: blocksMap,
 		gameStatus: {
 			score: 0,
@@ -23,18 +24,19 @@ const positionsEqual = function(p1, p2) {
 	return p1.x === p2.x && p1.y === p2.y
 }
 
-export function blocksReducer({ figure, blocksMap, gameStatus }, action) {
+export function blocksReducer(state, action) {
+	const { figure, nextFigure, blocksMap, gameStatus } = state
 	if (!figure) {
 		return {
-			figure: getRandomFigure(),
-			blocksMap,
-			gameStatus
+			...state,
+			figure: nextFigure,
+			nextFigure: getRandomFigure(),
 		}
 	}
 
 	const oldPositions = figure.blocks;
 
-	const newFigure = getNextFigure(figure, action.type)
+	const newFigure = moveFigure(figure, action.type)
 	const newPositions = newFigure.blocks;
 
 	let isStuck = false; 
@@ -45,11 +47,7 @@ export function blocksReducer({ figure, blocksMap, gameStatus }, action) {
 
 	} catch (error) {
 		console.log(error);
-		return {
-			figure,
-			blocksMap,
-			gameStatus
-		}	
+		return state
 	}
 
 	const samePositions = newPositions.every(
@@ -66,7 +64,8 @@ export function blocksReducer({ figure, blocksMap, gameStatus }, action) {
 			const reducedBlocksMap = reduceFullRows(newBlocksMap);
 
 			return {
-				figure: null,
+				figure: nextFigure,
+				nextFigure: getRandomFigure(),
 				blocksMap: reducedBlocksMap,
 				gameStatus: {
 					score: gameStatus.score + 1,
@@ -75,16 +74,14 @@ export function blocksReducer({ figure, blocksMap, gameStatus }, action) {
 			}
 		} else {
 			return {
+				...state,
 				figure: newFigure,
-				blocksMap,
-				gameStatus
 			}
 		}
 	} else {
 		return {
+			...state,
 			figure: isStuck ? figure : newFigure,
-			blocksMap,
-			gameStatus
 		};
 	}
 }
@@ -105,7 +102,7 @@ function isGameOver(blocksMap) {
 	return blocksMap[0].filter(block => Boolean(block)).length > 0;
 }
 
-function getNextFigure(figure, action) {
+function moveFigure(figure, action) {
 	const { x, y } = figure.position;
 	switch (action) {
 		case C.LEFT:

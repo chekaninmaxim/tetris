@@ -1,12 +1,6 @@
-import React from 'react';
-import GameStage from './GameStage.js';
+import React from 'react'
+import Game from './game/Game'
+import '../App.css'
 
-import '../App.css';
-
-function App() {
-  return (
-    <div className="App"> <GameStage /> </div>
-  );
-}
-
-export default App;
+const App = () => (<Game />)
+export default App

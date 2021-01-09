@@ -1,9 +1,29 @@
 
+
+.Game {
+  position: relative;
+  position: relative;
+  margin :auto;
+  padding : 10px;
+}
+
+.Score-view {
+  margin: 0 auto;
+  width: 360px;
+  text-align: right;
+}
+
 .Tetris-stage {
   border: 2px solid blue;
   background-color: #282c34;
   position: relative;
   margin :auto;
+}
+
+.Small-stage {
+  margin-left: 8px; 
+  position: relative;
+  background-color: #d3f7f1;
 }
 
 .Block {
