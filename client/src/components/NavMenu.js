@@ -1,24 +1,27 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Menu } from 'semantic-ui-react'
 
 
 export default () => {
-    const [activeItem, setActiveItem] = useState('home')
     const history = useHistory()
+    const [activeItem, setActiveItem] = useState('/')
+
+    useEffect(() => setActiveItem(history.location.pathname), []);
 
     const handleItemClick = (e, { name }) => {
         setActiveItem(name)
-        history.replace(name === 'home' ? '/' : name)
+        history.replace(name)
     }
-
     return (
         <Menu pointing secondary>
             <Menu.Item
-                name='home'
-                active={activeItem === 'home'}
+                name='/'
+                active={activeItem === '/'}
                 onClick={handleItemClick}
-            />
+            >
+                Home
+            </Menu.Item>
             <Menu.Item
                 name='game'
                 active={activeItem === 'game'}

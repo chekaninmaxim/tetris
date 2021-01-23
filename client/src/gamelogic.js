@@ -39,7 +39,9 @@ export function blocksReducer(state, action) {
 	const newFigure = moveFigure(figure, action.type)
 	const newPositions = newFigure.blocks;
 
-	let isStuck = false; 
+	let isStuck = false;
+
+	// TODO: figure out how to avoid crash here 
 	try {
 		isStuck = newPositions.some(
 			block => blocksMap[block.y][block.x]

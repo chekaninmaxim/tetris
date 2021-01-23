@@ -1,11 +1,13 @@
-import AC from './actionTypes'
+import {
+
+} from './actionTypes'
 
 export const updateScore = (score) => ({
-    type : AC.UPDATE_SCORE,
+    type : UPDATE_SCORE,
     payload: score
 })
 
 export const updateNext = (nextFigure) => ({
-    type : AC.UPDATE_NEXT,
+    type : UPDATE_NEXT,
     payload: nextFigure
 })

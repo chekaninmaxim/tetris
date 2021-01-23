@@ -1,5 +1,5 @@
 
-import React, {useReducer, useEffect} from 'react';
+import React, {useReducer, useEffect, useMemo} from 'react';
 import BlocksGroup from './BlocksGroup';
 
 import { updateScore, updateNext } from '../../redux/actions'
@@ -54,31 +54,38 @@ const GameStage = ({ updateScore, updateNext, size}) => {
 		updateScore(state.gameStatus.score)
 	}, [state.gameStatus.score])
 
+	const fallingBlocks = state.figure?.blocks.map(block => ({
+		position: block,
+		color: state.figure.color
+	}));
+
+	const fallenBlocks = useMemo(() => {
+		const result = [];
+
+		for (let i = 0; i < state.blocksMap.length; i ++ ) {
+			for (let j = 0; j < state.blocksMap[i].length; j++ ) {
+				const color = state.blocksMap[i][j];
+				if (color) {
+					result.push({
+						position : { x: j, y: i},
+						color
+					})
+				} 
+			} 
+		}
+		return result;
+
+	}, [state.blocksMap]);
+
 	return (
 		<div className={'Tetris-stage'} style={size} >	
 			<BlocksGroup
 				key={0}
-				blocks={
-					state.figure?.blocks.map(block => ({
-						position: block,
-						color: state.figure.color
-					}))
-				}
+				blocks={fallingBlocks}
 			/> 
 			<BlocksGroup
 				key={1}
-				blocks={
-					state.blocksMap.map((row, y) => row.reduce((filtered, color, x) => {
-						if (color) {
-							return filtered.concat({
-								position: { x, y },
-								color: color
-							})
-						} else {
-							return filtered;
-						}
-					}, [])).flat()
-				}
+				blocks={fallenBlocks}
 			/>
 			{ state.gameStatus.gameOver && <h1> game over! </h1> }
 		</div>

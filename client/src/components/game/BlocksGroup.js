@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import TetrisBlock from './TetrisBlock.js';
 
 import Settings from '../../settings'
 
 function BlocksGroup({blocks, scale}) {
+
     return (
         <>
             {
@@ -29,4 +30,4 @@ BlocksGroup.defaultProps = {
     scale: 1
 }
 
-export default BlocksGroup;
+export default memo(BlocksGroup);
