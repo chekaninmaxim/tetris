@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import Game from './game/Game'
 import {
     BrowserRouter as Router,
@@ -22,6 +22,12 @@ const App = () => {
             </Route>
             <Route path="/leaderboard">
                 <LeaderBoard />
+            </Route>
+            <Route path="/login">
+                Hello world
+            </Route>
+            <Route path="/register">
+                Hello world1
             </Route>
         </Router>
     )

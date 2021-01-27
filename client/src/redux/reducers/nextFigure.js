@@ -1,11 +1,11 @@
-import AC from '../actionTypes' 
+import {UPDATE_NEXT} from '../actionTypes' 
 
 const nextFigure = (state = [], { type, payload }) => {
-    if (AC.UPDATE_NEXT === type) {
+    if (UPDATE_NEXT === type) {
         return payload
     } else {
         return state
     }
 }
 
-export default nextFigure
+export default nextFigure;

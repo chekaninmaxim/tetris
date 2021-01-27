@@ -1,16 +1,13 @@
-import { ReactReduxContext } from "react-redux";
-import {combineReducers, createStore} from 'redux'
-import score from './reducers/score'
-import nextFigure from './reducers/nextFigure'
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
+import reducer from './reducers'
 
-const reducer = combineReducers({
-    score,
-    nextFigure
-})
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export default createStore(
     reducer,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-    );
+    composeEnhancers(applyMiddleware(thunk))
+);
 
 
